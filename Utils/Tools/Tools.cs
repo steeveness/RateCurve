@@ -46,6 +46,48 @@ namespace Utils.Tools
             return pos;
         }
 
+        public static int FindLowestIndexAbove(SortedDictionary<double, double> myList, double myKey)
+        {
+            if (myKey >= myList.Last().Key)
+                throw new Exception("No values above key inside the sorted dictionary");
+
+            int pos = FindNearestIndex(myList, myKey);
+
+            if (myKey < myList.ElementAt(pos).Key)
+            {
+                return pos;
+            }
+            else
+            {
+                if (pos < myList.Count - 1)
+                {
+                    return pos+1;
+                }
+                else
+                    throw new Exception("No values above key inside the sorted dictionary");
+            }
+        }
+
+        public static int FindHighestIndexBelow(SortedDictionary<double, double> dict, double key)
+        {
+            if (key <= dict.First().Key)
+                throw new Exception("No values below key inside the sorted dictionary");
+
+            int pos = FindNearestIndex(dict, key);
+
+            if (key > dict.ElementAt(pos).Key)
+            {
+                return pos;
+            }
+            else
+            {
+                if (pos > 0)
+                    return pos - 1;
+                else
+                    throw new Exception("No values below key inside the sorted dictionary");
+            }
+        }
+
         public static double FindLowestAbove(SortedDictionary<double, double> myList, double myKey)
         {
             if (myKey >= myList.Last().Key)
@@ -136,10 +178,21 @@ namespace Utils.Tools
             return pos;
         }
 
-        public static int FindInterval(SortedDictionary<double, double> dict, double key)
+        public static Tuple<int, int> FindIndexInterval(SortedDictionary<double,double> dict, double key)
         {
-            if (key <= dict.First().Key || key >= dict.Last().Key )
-                throw new Exception("The key is not ");
+            if (key <= dict.First().Key || key >= dict.Last().Key)
+                throw new Exception("The key is out of the bounds of the SortedDictionary");
+
+            try
+            {
+                int lowerIndex = FindHighestIndexBelow(dict, key);
+
+                return new Tuple<int, int>(lowerIndex, lowerIndex + 1);
+            }
+            catch(Exception e)
+            {
+                throw;
+            }
         }
     }
 }

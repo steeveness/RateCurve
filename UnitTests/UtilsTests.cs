@@ -26,7 +26,7 @@ namespace UnitTests
         }
 
         [TestMethod]
-        public void should_return_minus_one_on_if_value_out_of_collection()
+        public void should_return_minus_one_if_value_out_of_collection_on_index_searching()
         {
             double[] collection = new double[] { 1, 3, 4, 9, 10, 16, 18, 21, 27, 34 };
 
@@ -119,6 +119,88 @@ namespace UnitTests
             }
 
             Assert.IsTrue(key1.Equals(0.25) && key2.Equals(2) && key3.Equals(9) && key4.Equals(10));
+        }
+
+        [TestMethod]
+        public void should_return_lowest_index_above_value_for_first_and_intermidiate_elements()
+        {
+            SortedDictionary<double, double> collection = new SortedDictionary<double, double>
+            {
+                {0.25, 1 },
+                {0.5, 3 },
+                {0.75, 4 },
+                {1, 9 },
+                {1.25, 10 },
+                {1.5, 16 },
+                {2, 18 },
+                {3, 21 },
+                {4, 34},
+                {5, 18 },
+                {6, 21 },
+                {7, 34},
+                {8, 18 },
+                {9, 21 },
+                {10, 34}
+            };
+
+            double val1 = 0.26;
+            double val2 = 0.37;
+            double val3 = 2.12;
+            double val4 = 9.25;
+
+            double ind1 = Tools.FindLowestIndexAbove(collection, val1);
+            double ind2 = Tools.FindLowestIndexAbove(collection, val2);
+            double ind3 = Tools.FindLowestIndexAbove(collection, val3);
+            double ind4 = Tools.FindLowestIndexAbove(collection, val4);
+
+            Assert.IsTrue(ind1.Equals(1) && ind2.Equals(1) && ind3.Equals(7) && ind4.Equals(14));
+        }
+
+        [TestMethod]
+        public void should_return_highest_index_below_value_for_first_and_intermidiate_elements()
+        {
+            SortedDictionary<double, double> collection = new SortedDictionary<double, double>
+            {
+                {0.25, 1 },
+                {0.5, 3 },
+                {0.75, 4 },
+                {1, 9 },
+                {1.25, 10 },
+                {1.5, 16 },
+                {2, 18 },
+                {3, 21 },
+                {4, 34},
+                {5, 18 },
+                {6, 21 },
+                {7, 34},
+                {8, 18 },
+                {9, 21 },
+                {10, 34}
+            };
+
+            double val1 = 0.26;
+            double val2 = 2.12;
+            double val3 = 9.25;
+            double val4 = 10.4;
+
+            double key1 = -1;
+            double key2 = -1;
+            double key3 = -1;
+            double key4 = -1;
+
+            try
+            {
+                key1 = Tools.FindHighestIndexBelow(collection, val1);
+                key2 = Tools.FindHighestIndexBelow(collection, val2);
+                key3 = Tools.FindHighestIndexBelow(collection, val3);
+                key4 = Tools.FindHighestIndexBelow(collection, val4);
+            }
+            catch (Exception e)
+            {
+
+            }
+
+            Assert.IsTrue(key1.Equals(0) && key2.Equals(6) && key3.Equals(13) && key4.Equals(14));
         }
 
         [TestMethod]
@@ -218,7 +300,7 @@ namespace UnitTests
         }
 
         [TestMethod]
-        public void should_return_abscissa_of_interpolated_regular_point_linear()
+        public void should_return_interval_containing_point()
         {
             SortedDictionary<double, double> mainPoints = new SortedDictionary<double, double>
             {
@@ -231,58 +313,21 @@ namespace UnitTests
                 {2, 18 },
             };
 
-            double x = 0.37;
-            double expectedY = 1.96;
+            double x = 0.84;
+            int expectedLower = 2;
 
-            double x1 = 0.25;
-            
-            try
-            {
-                double y = Interpolator.PointLinearInterpolation(mainPoints, x);
-
-                double y1 = Interpolator.PointLinearInterpolation(mainPoints, x1);
-
-                Assert.IsTrue(y.Equals(expectedY));
-            }
-            catch(Exception e)
-            {
-                Console.WriteLine(e.StackTrace);
-            }
-            
-        }
-
-        [TestMethod]
-        public void should_return_abscissa_of_interpolated_border_point_linear()
-        {
-            SortedDictionary<double, double> mainPoints = new SortedDictionary<double, double>
-            {
-                {0.25, 1 },
-                {0.5, 3 },
-                {0.75, 4 },
-                {1, 9 },
-                {1.25, 10 },
-                {1.5, 16 },
-                {2, 18 },
-            };
-
-            double x = 0.25;
-            double expectedY = 1;
-
-            double x1 = 2;
-            double expectedY1 = 18;
+            Tuple<int, int> interval = null;
 
             try
             {
-                double y = Interpolator.PointLinearInterpolation(mainPoints, x);
-
-                double y1 = Interpolator.PointLinearInterpolation(mainPoints, x1);
-
-                Assert.IsTrue(y.Equals(expectedY) && y1.Equals(expectedY1));
+                interval = Tools.FindIndexInterval(mainPoints, x);
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.StackTrace);
             }
+
+            Assert.IsTrue(interval.Item1.Equals(expectedLower) && interval.Item2.Equals(expectedLower+1));
         }
     }
 }

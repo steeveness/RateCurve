@@ -15,14 +15,31 @@ namespace Utils
         { 
             SortedDictionary<double, double> interpolatedPoints = new SortedDictionary<double, double>(givenPoints);
 
-            double firstX = interpolatedPoints.First().Key;
-            double lastX = interpolatedPoints.Last().Key;
+            double firstX = givenPoints.First().Key;
+            double lastX = givenPoints.Last().Key;
+             
+            double lower = 0;
+            double upper = firstX;
 
-            for(double x=firstX+step; x<lastX; x+=step)
+            foreach(var pair in givenPoints)
             {
-                //double y = PointLinearInterpolation(x-step,givenPoints[x-step],;
+                if (pair.Key.Equals(firstX))
+                    continue;
+
+                lower = upper;
+                upper = pair.Key;
+
+                for(double x = lower+step; x < upper; x+=step)
+                {
+                    double xInf = Math.Max(lower, x - step);
+                    double yInf = interpolatedPoints[xInf];
+                    
+                    if(!interpolatedPoints.ContainsKey(x))
+                        interpolatedPoints.Add(x, PointLinearInterpolation(xInf, yInf, upper, givenPoints[upper], x));
+                }
             }
-            throw new NotImplementedException();
+
+            return interpolatedPoints;
         }
 
         public static double PointLinearInterpolation(SortedDictionary<double, double> mainPoints, double x)
@@ -47,12 +64,9 @@ namespace Utils
 
         }
 
-
         private static double PointLinearInterpolation(double xInf, double yInf, double xSup, double ySup, double x)
         {
             return (ySup-yInf) * (x-xInf) / (xSup-xInf) + yInf;
         }
-
-
     }
 }

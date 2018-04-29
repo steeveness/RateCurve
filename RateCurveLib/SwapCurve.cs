@@ -14,6 +14,10 @@ namespace RateCurveLib
             _Tenor = tenor;
         }
 
+        public override string CurveType()
+        {
+            return "Swap";
+        }
 
         public override SortedDictionary<double, double> StripYieldCurve(IborCurve iborCurve)
         {

@@ -10,6 +10,11 @@ namespace RateCurveLib
         {
 
         }
+
+        public override string CurveType()
+        {
+            return "Ibor";
+        }
         #endregion
 
         #region methods
